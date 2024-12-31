@@ -165,37 +165,37 @@ export default function Home() {
             {/* Product Cards */}
             <div id="product-container" className="flex flex-nowrap overflow-x-auto gap-6 scroll-smooth snap-x snap-mandatory scrollbar-hide">
               {productItems.map((product, index) => (
-                <motion.div
-                  key={index}
-                  className="card card-compact bg-white w-80 min-w-[80%] md:min-w-[40%] lg:min-w-[30%] shadow-xl snap-center rounded-lg overflow-hidden transition-transform transform hover:scale-105"
-                  variants={fadeIn}
-                >
-                  <figure className="bg-gray-100">
-                    <Image
-                      src={product.image}
-                      alt={product.commonName}
-                      height={300}
-                      width={400}
-                      className="object-cover w-full h-48"
-                    />
-                  </figure>
-                  <div className="card-body p-6">
-                    <h2 className="card-title text-xl font-bold text-gray-900">{product.commonName}</h2>
-                    <h3 className="card-title text-lg italic text-gray-600">{product.binomialName}</h3>
-                    <h3 className="card-title text-lg text-gray-700">{product.size}</h3>
-                    <p className="text-base text-gray-500 mt-2">
-                      {product.description || "No description available"}
-                    </p>
-                    <div className="card-actions mt-4 flex justify-between items-center">
-                      <h3 className="card-title text-lg font-semibold text-gray-900">
-                        {product.price}
-                      </h3>
-                      <button className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-400 transition duration-200">
-                        Buy Now
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
+              <motion.div
+                key={index}
+                className="card card-compact bg-white w-80 min-w-[80%] md:min-w-[40%] lg:min-w-[30%] shadow-xl snap-center rounded-lg overflow-hidden transition-transform transform hover:scale-105"
+                variants={fadeIn}
+              >
+                <figure className="bg-gray-100">
+                <Image
+                  src={product.image}
+                  alt={product.commonName}
+                  height={300}
+                  width={400}
+                  className="object-cover w-full h-48"
+                />
+                </figure>
+                <div className="card-body p-6">
+                <h2 className="card-title text-xl font-bold text-gray-900">{product.commonName}</h2>
+                <h3 className="text-lg italic text-gray-600">{product.binomialName}</h3>
+                <h3 className="text-lg text-gray-700">{product.size}</h3>
+                <p className="text-base text-gray-500 mt-2">
+                  {product.description || "No description available"}
+                </p>
+                <div className="card-actions mt-4 flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                  {product.price}
+                  </h3>
+                  <button className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-400 transition duration-200">
+                  Buy Now
+                  </button>
+                </div>
+                </div>
+              </motion.div>
               ))}
             </div>
 

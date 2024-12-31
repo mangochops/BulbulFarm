@@ -100,7 +100,7 @@ export const productItems = [
     binomialName: "Quercus robur",
     size: "30-40cm",
     description: "A hardy and long-lived tree, the Oak is known for its strength and beautiful foliage. Perfect for large gardens and parks.",
-    price: "$15.99"
+    price: "Kes. 200"
   },
   {
     id: 2,
@@ -109,7 +109,7 @@ export const productItems = [
     binomialName: "Acer saccharum",
     size: "20-30cm",
     description: "The Sugar Maple is famous for its vibrant autumn colors and sap, which can be used to make maple syrup. Great for medium to large gardens.",
-    price: "$12.99"
+    price: "Kes. 300"
   },
   {
     id: 3,
@@ -118,7 +118,7 @@ export const productItems = [
     binomialName: "Pinus sylvestris",
     size: "25-35cm",
     description: "A fast-growing evergreen, the Scots Pine is ideal for creating windbreaks or adding year-round greenery to your landscape.",
-    price: "$10.50"
+    price: "Kes. 200"
   },
   {
     id: 4,
@@ -127,7 +127,7 @@ export const productItems = [
     binomialName: "Betula pendula",
     size: "15-25cm",
     description: "Known for its striking white bark and delicate leaves, the Silver Birch is a beautiful addition to any garden, adding elegance and texture.",
-    price: "$14.75"
+    price: "Kes. 200"
   },
   {
     id: 5,
@@ -136,7 +136,7 @@ export const productItems = [
     binomialName: "Prunus avium",
     size: "20-30cm",
     description: "A fruit-bearing tree that blooms with beautiful pink and white flowers in spring, the Wild Cherry is great for orchards or ornamental gardens.",
-    price: "$18.25"
+    price: "Kes. 300"
   },
   {
     id: 6,
@@ -145,7 +145,7 @@ export const productItems = [
     binomialName: "Cedrus libani",
     size: "25-35cm",
     description: "The Cedar of Lebanon is an iconic evergreen tree known for its majestic size and fragrant wood. Ideal for large open spaces.",
-    price: "$20.99"
+    price: "Kes. 200"
   }
 ];
 
