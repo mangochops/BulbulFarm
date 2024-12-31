@@ -170,14 +170,14 @@ export default function Home() {
                 className="card card-compact bg-white w-80 min-w-[80%] md:min-w-[40%] lg:min-w-[30%] shadow-xl snap-center rounded-lg overflow-hidden transition-transform transform hover:scale-105"
                 variants={fadeIn}
               >
-                <figure className="bg-gray-100">
-                <Image
+                <figure className="bg-gray-100 rounded-t-lg overflow-hidden">
+                  <Image
                   src={product.image}
                   alt={product.commonName}
                   height={300}
                   width={400}
-                  className="object-cover w-full h-48"
-                />
+                  className="object-cover w-full h-48 transition-transform duration-300 hover:scale-105"
+                  />
                 </figure>
                 <div className="card-body p-6">
                 <h2 className="card-title text-xl font-bold text-gray-900">{product.commonName}</h2>
