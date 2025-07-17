@@ -60,7 +60,7 @@ const CustomerCarousel: React.FC<CustomerCarouselProps> = ({ customers }) => {
 
           {/* Testimonial Text */}
           <blockquote className="text-xl md:text-2xl text-gray-700 font-light italic mb-6 leading-relaxed">
-            "{customers[currentIndex].feedback}"
+            `&quot;`{customers[currentIndex].feedback}`&quot;`
           </blockquote>
 
           {/* Customer Name */}
