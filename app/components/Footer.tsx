@@ -126,7 +126,7 @@ const Footer = () => {
           <div className="max-w-7xl mx-auto px-6 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <p className="text-gray-400 text-sm flex items-center">
-                © 2024 Bulbul Farm. Made with <Heart className="mx-1 text-red-500" size={16} /> by Willicent Mbugua
+                © 2024 Bulbul Farm. Made with <Heart className="mx-1 text-red-500" size={16} /> by Eng.Mbugua
               </p>
               <div className="flex space-x-6 text-sm text-gray-400">
                 <a href="#" className="hover:text-green-400 transition-colors duration-300">
