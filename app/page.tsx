@@ -305,7 +305,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <motion.div className="text-center mb-16" variants={fadeIn}>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Get In Touch</h2>
-            <p className="text-xl text-gray-600">Ready to start your green journey? We're here to help!</p>
+            <p className="text-xl text-gray-600">Ready to start your green journey? We`&apos;`re here to help!</p>
             <div className="w-24 h-1 bg-green-600 mx-auto mt-6"></div>
           </motion.div>
 
@@ -317,9 +317,9 @@ export default function Home() {
               {/* Contact Info */}
               <div className="relative p-12 bg-gradient-to-br from-green-600 to-green-700 text-white">
                 <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-6">Let's Connect</h3>
+                  <h3 className="text-3xl font-bold mb-6">Let`&apos;`s Connect</h3>
                   <p className="text-green-100 mb-8 text-lg">
-                    We're available 24/7 to answer your questions and help you choose the perfect trees for your
+                    We`&apos;`re available 24/7 to answer your questions and help you choose the perfect trees for your
                     project.
                   </p>
 
