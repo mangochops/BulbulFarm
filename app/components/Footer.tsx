@@ -34,15 +34,15 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 text-gray-300">
                   <Mail size={18} className="text-green-400" />
-                  <span>info@bulbulfarm.com</span>
+                  <span>info@bulbulfarm.co.ke</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <Phone size={18} className="text-green-400" />
-                  <span>+254 123 456 789</span>
+                  <span>+254 729 931 982</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <MapPin size={18} className="text-green-400" />
-                  <span>Nairobi, Kenya</span>
+                  <span>Limuru, Kenya</span>
                 </div>
               </div>
             </div>
