@@ -317,9 +317,9 @@ export default function Home() {
               {/* Contact Info */}
               <div className="relative p-12 bg-gradient-to-br from-green-600 to-green-700 text-white">
                 <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-6">Let`&apos;`s Connect</h3>
+                  <h3 className="text-3xl font-bold mb-6">Let us Connect</h3>
                   <p className="text-green-100 mb-8 text-lg">
-                    We`&apos;`re available 24/7 to answer your questions and help you choose the perfect trees for your
+                    We are available 24/7 to answer your questions and help you choose the perfect trees for your
                     project.
                   </p>
 
@@ -328,7 +328,7 @@ export default function Home() {
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">📧</div>
                       <div>
                         <div className="font-semibold">Email</div>
-                        <div className="text-green-100">info@bulbulfarm.com</div>
+                        <div className="text-green-100">info@bulbulfarm.co.ke</div>
                       </div>
                     </div>
 
@@ -336,7 +336,7 @@ export default function Home() {
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">📱</div>
                       <div>
                         <div className="font-semibold">Phone</div>
-                        <div className="text-green-100">+254 123 456 789</div>
+                        <div className="text-green-100">+254 729 931 982</div>
                       </div>
                     </div>
 
@@ -344,7 +344,7 @@ export default function Home() {
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">📍</div>
                       <div>
                         <div className="font-semibold">Location</div>
-                        <div className="text-green-100">Nairobi, Kenya</div>
+                        <div className="text-green-100">Limuru, Kenya</div>
                       </div>
                     </div>
                   </div>
