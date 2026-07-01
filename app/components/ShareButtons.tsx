@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 
 interface ShareButtonsProps {
   title: string;
-  slug: string;
 }
 
-export function ShareButtons({ title, slug }: ShareButtonsProps) {
+export function ShareButtons({ title }: ShareButtonsProps) {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
