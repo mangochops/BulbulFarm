@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import ArticleForm from '@/app/components/ArticleForm';
 
 interface Article {
@@ -19,10 +18,8 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [adminKey, setAdminKey] = useState('');
   const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(false);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [loginError, setLoginError] = useState('');
-  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,7 +162,6 @@ export default function AdminPage() {
               ) : (
                 articles.map((article) => (
                   <div
-                    key={article.id}
                     className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
                   >
                     <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
