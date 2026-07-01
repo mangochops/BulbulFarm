@@ -36,7 +36,7 @@ export default function AdminPage() {
       const key = expectedPassword;
       setAdminKey(key);
       setAuthenticated(true);
-      loadArticles(key);
+      loadArticles();
     } else {
       setLoginError('Incorrect password');
     }
