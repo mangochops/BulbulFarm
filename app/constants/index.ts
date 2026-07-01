@@ -45,6 +45,10 @@ export const navItems = [
     label:"Products"
   },
   {
+    route:"/articles",
+    label:"Articles"
+  },
+  {
     route:"/",
     label:"Customers"
   },
