@@ -5,13 +5,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const adminPassword = formData.get('adminPassword') as string;
+    const adminKey = process.env.ADMIN_KEY;
+    const authHeader = request.headers.get('authorization');
 
-    if (!adminPassword || adminPassword !== process.env.ADMIN_PASSWORD) {
+    if (!adminKey || authHeader !== `Bearer ${adminKey}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
