@@ -1,9 +1,10 @@
-import { db } from './db';
+import { getDB } from './db';
 import fs from 'fs';
 import path from 'path';
 
 export function initializeDatabase() {
   const dataDir = path.join(process.cwd(), 'data');
+  const db = getDB();
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }

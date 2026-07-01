@@ -141,7 +141,7 @@ export default function AdminPage() {
               adminKey={adminKey}
               onSuccess={() => {
                 setEditingArticle(null);
-                loadArticles(adminKey);
+                loadArticles();
               }}
             />
             {editingArticle && (

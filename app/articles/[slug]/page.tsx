@@ -69,7 +69,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               <h1 className="text-5xl font-bold text-gray-900 mt-4 leading-tight">{article.title}</h1>
             </div>
 
-            <ShareButtons title={article.title} slug={article.slug} />
+            <ShareButtons title={article.title} />
 
             <div className="prose prose-lg max-w-none text-gray-700 whitespace-pre-wrap mt-8 leading-relaxed">
               {article.description}
@@ -79,7 +79,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               <div className="bg-green-50 rounded-xl p-6">
                 <h3 className="font-semibold text-gray-900 mb-2">Share this article</h3>
                 <p className="text-gray-600 text-sm mb-4">Help others discover this story</p>
-                <ShareButtons title={article.title} slug={article.slug} />
+                <ShareButtons title={article.title} />
               </div>
             </div>
           </div>
