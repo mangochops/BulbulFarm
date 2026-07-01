@@ -42,7 +42,7 @@ export default function AdminPage() {
     }
   };
 
-  const loadArticles = async (key: string) => {
+  const loadArticles = async () => {
     try {
       const response = await fetch('/api/articles');
       if (response.ok) {
@@ -162,6 +162,7 @@ export default function AdminPage() {
               ) : (
                 articles.map((article) => (
                   <div
+                    key={article.id}
                     className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
                   >
                     <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
