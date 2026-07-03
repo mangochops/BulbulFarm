@@ -336,7 +336,7 @@ export default function Home() {
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">📱</div>
                       <div>
                         <div className="font-semibold">Phone</div>
-                        <div className="text-green-100">+254 729 931 982</div>
+                        <div className="text-green-100">+254 726 931 982</div>
                       </div>
                     </div>
 

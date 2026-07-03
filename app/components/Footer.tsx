@@ -38,7 +38,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <Phone size={18} className="text-green-400" />
-                  <span>+254 729 931 982</span>
+                  <span>+254 726 931 982</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <MapPin size={18} className="text-green-400" />
@@ -51,7 +51,7 @@ const Footer = () => {
             <div>
               <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
               <ul className="space-y-3">
-                {["Home", "About Us", "Services", "Products"].map((link) => (
+                {["Home", "About Us", "Services", "Products", "Articles", "Admin"].map((link) => (
                   <li key={link}>
                     <a
                       href="#"

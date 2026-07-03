@@ -1,25 +1,31 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getAllArticles } from '@/lib/db';
+import Navbar from '../components/ArticlesNav';
+import Footer from '../components/Footer';
 
 export default function ArticlesPage() {
   const articles = getAllArticles();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
-      <div className="max-w-6xl mx-auto">
+
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 ">
+      <header>
+        <Navbar />
+      </header>
+      <div className="max-w-6xl py-16 mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
           <div>
             <h1 className="text-5xl font-bold text-gray-900 mb-4">Articles & Insights</h1>
             <p className="text-lg text-gray-600">Discover stories about indigenous trees, sustainable farming, and nature&apos;s wisdom.</p>
           </div>
-          <Link
+          {/* <Link
             href="/admin"
             className="mt-6 md:mt-0 inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
           >
-            <span>+</span>
-            <span>Add Article</span>
-          </Link>
+
+            <span>Admin</span>
+          </Link> */}
         </div>
 
         {articles.length === 0 ? (
@@ -77,6 +83,7 @@ export default function ArticlesPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
