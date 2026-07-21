@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image"
 import { useState } from 'react';
 import ArticleForm from '@/app/components/ArticleForm';
 
@@ -457,7 +458,7 @@ export default function AdminPage() {
                     >
                       <div className="flex space-x-4 items-center">
                         <div className="w-16 h-16 relative bg-gray-100 rounded-lg overflow-hidden border">
-                          <img
+                          <Image
                             src={product.image}
                             alt={product.commonName}
                             className="w-full h-full object-cover"

@@ -98,7 +98,7 @@ const [products, setProducts] = useState<Product[]>([])
         console.error("Failed to fetch products:", error)
       }
       // Fallback to static constants if API isn't live yet
-      setProducts(staticProducts)
+      setProducts(productItems)
     }
 
     fetchArticles()
@@ -286,7 +286,7 @@ const [products, setProducts] = useState<Product[]>([])
               id="product-container"
               className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide scroll-smooth snap-x snap-mandatory px-12"
             >
-              {productItems.map((product, index) => (
+              {products.map((product, index) => (
                <motion.div
                   key={product.id || index}
                   className="group bg-white min-w-[320px] md:min-w-[350px] shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 snap-center border border-gray-100"
@@ -302,7 +302,7 @@ const [products, setProducts] = useState<Product[]>([])
                     />
 
                     <Image
-                        src={hoverImage}
+                        src={product.matureImage || product.image || "/placeholder.svg"}
                         alt={`${product.commonName} - Mature Tree`}
                         fill
                         className="object-cover w-full h-full opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:scale-105"
