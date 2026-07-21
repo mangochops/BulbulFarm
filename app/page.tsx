@@ -67,8 +67,8 @@ const staggerContainer = {
 }
 
 export default function Home() {
-const [articles, setArticles] = useState<Article[]>([])
-const [products, setProducts] = useState<Product[]>([])
+  const [articles, setArticles] = useState<Article[]>([])
+  const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     async function fetchArticles() {
@@ -83,7 +83,7 @@ const [products, setProducts] = useState<Product[]>([])
         console.error("Failed to fetch articles:", error)
       }
     }
-    
+
     async function fetchProducts() {
       try {
         const res = await fetch("/api/products")
@@ -105,7 +105,7 @@ const [products, setProducts] = useState<Product[]>([])
     fetchProducts()
   }, [])
 
-  
+
   return (
     <main className="flex flex-col min-h-screen bg-gray-50">
       <header>
@@ -287,7 +287,7 @@ const [products, setProducts] = useState<Product[]>([])
               className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide scroll-smooth snap-x snap-mandatory px-12"
             >
               {products.map((product, index) => (
-               <motion.div
+                <motion.div
                   key={product.id || index}
                   className="group bg-white min-w-[320px] md:min-w-[350px] shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 snap-center border border-gray-100"
                   variants={fadeIn}
@@ -298,24 +298,24 @@ const [products, setProducts] = useState<Product[]>([])
                       alt={product.commonName}
                       height={250}
                       width={350}
-                      className="object-cover w-full h-full group-hover:opacity-0 transition-opacity duration-500"
+                      className="object-contain w-full h-full group-hover:opacity-0 transition-opacity duration-500"
                     />
 
                     <Image
-                        src={product.matureImage || product.image || "/placeholder.svg"}
-                        alt={`${product.commonName} - Mature Tree`}
-                        fill
-                        className="object-cover w-full h-full opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:scale-105"
-                      />
+                      src={product.matureImage || product.image || "/placeholder.svg"}
+                      alt={`${product.commonName} - Mature Tree`}
+                      fill
+                      className="object-cover w-full h-full opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:scale-105"
+                    />
 
                     <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       {product.size}
                     </div>
-                   {product.matureImage && (
-                        <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded opacity-100 group-hover:opacity-0 transition-opacity z-10">
-                          Hover to view mature tree 🌳
-                        </div>
-                      )}
+                    {product.matureImage && (
+                      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded opacity-100 group-hover:opacity-0 transition-opacity z-10">
+                        Hover to view mature tree 🌳
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-6">
@@ -345,7 +345,7 @@ const [products, setProducts] = useState<Product[]>([])
       </motion.section>
 
 
-     {/* Articles / Blog Snippet Section */}
+      {/* Articles / Blog Snippet Section */}
       {articles.length > 0 && (
         <motion.section
           className="py-24 px-6 bg-gray-50"
