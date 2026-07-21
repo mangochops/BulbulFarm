@@ -41,7 +41,7 @@ export const navItems = [
     label:"Services"
   },
   {
-    route:"/",
+    route:"/products",
     label:"Products"
   },
   {
