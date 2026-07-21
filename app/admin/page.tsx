@@ -36,7 +36,7 @@ export default function AdminPage() {
   // Active Admin Tab ('articles' | 'products')
   const [activeTab, setActiveTab] = useState<'articles' | 'products'>('articles');
 
-  
+
   // Products State
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -156,6 +156,21 @@ export default function AdminPage() {
     }
   };
 
+  // Convert uploaded image files to base64 string for direct SQLite storage
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldName: 'image' | 'matureImage') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductForm((prev) => ({
+          ...prev,
+          [fieldName]: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setProductForm(product);
@@ -244,83 +259,81 @@ export default function AdminPage() {
         <div className="flex border-b border-gray-200 mb-8 space-x-4">
           <button
             onClick={() => setActiveTab('articles')}
-            className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${
-              activeTab === 'articles'
+            className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'articles'
                 ? 'border-green-600 text-green-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Articles Management
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${
-              activeTab === 'products'
+            className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'products'
                 ? 'border-green-600 text-green-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Products / Ecommerce
           </button>
         </div>
 
         {activeTab === 'articles' && (
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              {editingArticle ? 'Edit Article' : 'Create Article'}
-            </h2>
-            <ArticleForm
-              article={editingArticle || undefined}
-              adminKey={adminKey}
-              onSuccess={() => {
-                setEditingArticle(null);
-                loadArticles();
-              }}
-            />
-            {editingArticle && (
-              <button
-                onClick={() => setEditingArticle(null)}
-                className="w-full mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-
-          <div className="md:col-span-2">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Articles List</h2>
-            <div className="space-y-4">
-              {articles.length === 0 ? (
-                <p className="text-gray-500">No articles yet. Create one to get started!</p>
-              ) : (
-                articles.map((article) => (
-                  <div
-                    key={article.id}
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
-                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">{article.description}</p>
-                    <div className="mt-4 flex gap-2">
-                      <button
-                        onClick={() => setEditingArticle(article)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteArticle(article.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="md:col-span-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                {editingArticle ? 'Edit Article' : 'Create Article'}
+              </h2>
+              <ArticleForm
+                article={editingArticle || undefined}
+                adminKey={adminKey}
+                onSuccess={() => {
+                  setEditingArticle(null);
+                  loadArticles();
+                }}
+              />
+              {editingArticle && (
+                <button
+                  onClick={() => setEditingArticle(null)}
+                  className="w-full mt-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
               )}
             </div>
+
+            <div className="md:col-span-2">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Articles List</h2>
+              <div className="space-y-4">
+                {articles.length === 0 ? (
+                  <p className="text-gray-500">No articles yet. Create one to get started!</p>
+                ) : (
+                  articles.map((article) => (
+                    <div
+                      key={article.id}
+                      className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
+                    >
+                      <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
+                      <p className="text-gray-600 text-sm mt-1 line-clamp-2">{article.description}</p>
+                      <div className="mt-4 flex gap-2">
+                        <button
+                          onClick={() => setEditingArticle(article)}
+                          className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteArticle(article.id)}
+                          className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
-        </div>
         )}
 
         {/* Tab 2: Products */}
@@ -382,25 +395,27 @@ export default function AdminPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Seedling Image URL (Primary)</label>
                   <input
-                    type="text"
-                    required
-                    value={productForm.image}
-                    onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
-                    placeholder="/products/podo-seedling.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, 'image')}
+                    className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
+                  {productForm.image && (
+                    <div className="mt-2 text-xs text-green-600 font-medium">✓ Seedling image attached</div>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Grown Tree Image URL (Hover)</label>
                   <input
-                    type="text"
-                    required
-                    value={productForm.matureImage}
-                    onChange={(e) => setProductForm({ ...productForm, matureImage: e.target.value })}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
-                    placeholder="/products/podo-mature.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, 'matureImage')}
+                    className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
+                  {productForm.matureImage && (
+                    <div className="mt-2 text-xs text-green-600 font-medium">✓ Grown tree image attached</div>
+                  )}
                 </div>
 
                 <div>
@@ -458,11 +473,18 @@ export default function AdminPage() {
                     >
                       <div className="flex space-x-4 items-center">
                         <div className="w-16 h-16 relative bg-gray-100 rounded-lg overflow-hidden border">
-                          <Image
-                            src={product.image}
-                            alt={product.commonName}
-                            className="w-full h-full object-cover"
-                          />
+                          {product.image ? (
+                            <Image
+                              src={product.image}
+                              alt={product.commonName}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                              No image
+                            </div>
+                          )}
                         </div>
                         <div>
                           <h3 className="text-lg font-bold text-gray-900">{product.commonName}</h3>
