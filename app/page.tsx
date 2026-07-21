@@ -22,6 +22,16 @@ interface Article {
   updated_at: string
 }
 
+interface Product {
+  id?: number
+  commonName: string
+  binomialName: string
+  description: string
+  price: string
+  size: string
+  image: string
+  matureImage?: string // Image of the grown tree on hover
+}
 
 // Animation Variants
 const fadeIn = {
@@ -58,6 +68,7 @@ const staggerContainer = {
 
 export default function Home() {
 const [articles, setArticles] = useState<Article[]>([])
+const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     async function fetchArticles() {
@@ -72,9 +83,29 @@ const [articles, setArticles] = useState<Article[]>([])
         console.error("Failed to fetch articles:", error)
       }
     }
+    
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products")
+        if (res.ok) {
+          const data = await res.json()
+          if (data && data.length > 0) {
+            setProducts(data)
+            return
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error)
+      }
+      // Fallback to static constants if API isn't live yet
+      setProducts(staticProducts)
+    }
+
     fetchArticles()
+    fetchProducts()
   }, [])
 
+  
   return (
     <main className="flex flex-col min-h-screen bg-gray-50">
       <header>
@@ -256,22 +287,40 @@ const [articles, setArticles] = useState<Article[]>([])
               className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide scroll-smooth snap-x snap-mandatory px-12"
             >
               {productItems.map((product, index) => (
-                <motion.div
-                  key={index}
+                const primaryImage = product.image || "/placeholder.svg"
+                const hoverImage = product.matureImage || primaryImage            
+    
+
+                return (
+               <motion.div
+                  key={product.id || index}
                   className="group bg-white min-w-[320px] md:min-w-[350px] shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 snap-center border border-gray-100"
                   variants={fadeIn}
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden h-64 w-full">
                     <Image
                       src={product.image || "/placeholder.svg"}
                       alt={product.commonName}
                       height={250}
                       width={350}
-                      className="object-cover w-full h-64 group-hover:scale-110 transition-transform duration-500"
+                      className="object-cover w-full h-full group-hover:opacity-0 transition-opacity duration-500"
                     />
+
+                    <Image
+                        src={hoverImage}
+                        alt={`${product.commonName} - Mature Tree`}
+                        fill
+                        className="object-cover w-full h-full opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:scale-105"
+                      />
+
                     <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       {product.size}
                     </div>
+                   {product.matureImage && (
+                        <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded opacity-100 group-hover:opacity-0 transition-opacity z-10">
+                          Hover to view mature tree 🌳
+                        </div>
+                      )}
                   </div>
 
                   <div className="p-6">
