@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Navbar from "./components/Navbar"
 import { customers, productItems } from "./constants"
@@ -8,6 +9,19 @@ import { ArrowDown, Star, ChevronLeft, ChevronRight } from "lucide-react"
 import CustomerCarousel from "./components/Socialproof"
 import Footer from "./components/Footer"
 import { motion } from "framer-motion"
+import Link from "next/link"
+
+
+interface Article {
+  id: number
+  title: string
+  description: string
+  featured_image: string | null
+  slug: string
+  created_at: string
+  updated_at: string
+}
+
 
 // Animation Variants
 const fadeIn = {
@@ -43,6 +57,24 @@ const staggerContainer = {
 }
 
 export default function Home() {
+const [articles, setArticles] = useState<Article[]>([])
+
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const res = await fetch("/api/articles")
+        if (res.ok) {
+          const data: Article[] = await res.json()
+          // Take the latest 3 articles for the landing page snippet
+          setArticles(data.slice(0, 3))
+        }
+      } catch (error) {
+        console.error("Failed to fetch articles:", error)
+      }
+    }
+    fetchArticles()
+  }, [])
+
   return (
     <main className="flex flex-col min-h-screen bg-gray-50">
       <header>
@@ -267,6 +299,96 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
+
+
+     {/* Articles / Blog Snippet Section */}
+      {articles.length > 0 && (
+        <motion.section
+          className="py-24 px-6 bg-gray-50"
+          initial="hidden"
+          whileInView="visible"
+          variants={staggerContainer}
+          viewport={{ once: true }}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-16" variants={fadeIn}>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Latest Insights & Articles</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Discover expert advice, planting guides, and news on tree farming and conservation.
+              </p>
+              <div className="w-24 h-1 bg-green-600 mx-auto mt-6"></div>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {articles.map((article) => (
+                <motion.div
+                  key={article.id}
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col justify-between group"
+                  variants={fadeIn}
+                  whileHover={{ y: -6 }}
+                >
+                  <div>
+                    {article.featured_image ? (
+                      <div className="relative h-48 w-full overflow-hidden">
+                        <Image
+                          src={article.featured_image}
+                          alt={article.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-48 w-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xl">
+                        Bulbul Farm
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <div className="flex items-center text-xs text-gray-500 mb-3 space-x-2">
+                        <Calendar size={14} className="text-green-600" />
+                        <span>
+                          {new Date(article.created_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors">
+                        {article.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                        {article.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-6 pb-6 pt-0">
+                    <Link
+                      href={`/articles/${article.slug}`}
+                      className="inline-flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors text-sm"
+                    >
+                      Read Article <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* View All Articles Button */}
+            <motion.div className="text-center" variants={fadeIn}>
+              <Link
+                href="/articles"
+                className="inline-flex items-center bg-green-600 hover:bg-green-500 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform 
+hover:scale-105"
+              >
+                View All Articles
+                <ArrowRight size={20} className="ml-2" />
+              </Link>
+            </motion.div>
+          </div>
+        </motion.section>
+      )}
+
 
       {/* Testimonials Section */}
       <motion.section
