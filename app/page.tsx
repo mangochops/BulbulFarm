@@ -287,11 +287,6 @@ const [products, setProducts] = useState<Product[]>([])
               className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide scroll-smooth snap-x snap-mandatory px-12"
             >
               {productItems.map((product, index) => (
-                const primaryImage = product.image || "/placeholder.svg"
-                const hoverImage = product.matureImage || primaryImage            
-    
-
-                return (
                <motion.div
                   key={product.id || index}
                   className="group bg-white min-w-[320px] md:min-w-[350px] shadow-lg hover:shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 snap-center border border-gray-100"
