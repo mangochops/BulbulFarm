@@ -1,18 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
+import path from 'path';
 
-const db = new Database('database.db');
+const dbPath = path.join(process.cwd(), 'database.db');
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
+function getDB() {
+  return new Database(dbPath);
 }
 
+type Props = {
+  params: Promise<{ id: string }> | { id: string };
+};
+
 // GET /api/products/[id]
-export async function GET(req: Request, { params }: RouteParams) {
+export async function GET(req: NextRequest, { params }: Props) {
   try {
-    const product = db.prepare('SELECT * FROM products WHERE id = ?').get(params.id);
+    const { id } = await params;
+    const db = getDB();
+    const product = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
 
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -26,18 +31,36 @@ export async function GET(req: Request, { params }: RouteParams) {
 }
 
 // PUT /api/products/[id]
-export async function PUT(req: Request, { params }: RouteParams) {
+export async function PUT(req: NextRequest, { params }: Props) {
   try {
+    const adminKey = process.env.ADMIN_KEY;
+    const authHeader = req.headers.get('authorization');
+
+    if (adminKey && authHeader !== `Bearer ${adminKey}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
     const body = await req.json();
     const { commonName, binomialName, description, price, size, image, matureImage } = body;
 
+    const db = getDB();
     const stmt = db.prepare(`
       UPDATE products 
       SET commonName = ?, binomialName = ?, description = ?, price = ?, size = ?, image = ?, matureImage = ?
       WHERE id = ?
     `);
 
-    const result = stmt.run(commonName, binomialName, description, price, size, image, matureImage, params.id);
+    const result = stmt.run(
+      commonName || '',
+      binomialName || '',
+      description || '',
+      price || '',
+      size || '',
+      image || '',
+      matureImage || '',
+      id
+    );
 
     if (result.changes === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -51,10 +74,19 @@ export async function PUT(req: Request, { params }: RouteParams) {
 }
 
 // DELETE /api/products/[id]
-export async function DELETE(req: Request, { params }: RouteParams) {
+export async function DELETE(req: NextRequest, { params }: Props) {
   try {
+    const adminKey = process.env.ADMIN_KEY;
+    const authHeader = req.headers.get('authorization');
+
+    if (adminKey && authHeader !== `Bearer ${adminKey}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const db = getDB();
     const stmt = db.prepare('DELETE FROM products WHERE id = ?');
-    const result = stmt.run(params.id);
+    const result = stmt.run(id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });

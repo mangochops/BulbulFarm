@@ -50,6 +50,10 @@ export default function AdminPage() {
     matureImage: '',
   });
 
+  const [seedlingFile, setSeedlingFile] = useState<File | null>(null);
+  const [matureFile, setMatureFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
@@ -117,26 +121,87 @@ export default function AdminPage() {
     }
   };
 
+  // Convert uploaded image files to base64 string for direct SQLite storage
+  const uploadImageFile = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'products');
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${adminKey}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Image upload failed: ${errorData.error || 'Server error'}`);
+        return null;
+      }
+
+      const data = await res.json();
+      return data.url; // e.g. "/uploads/products/172158...-file.jpg"
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  };
 
   // Product Form Handlers
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const endpoint = editingProduct?.id ? `/api/products/${editingProduct.id}` : '/api/products';
-    const method = editingProduct?.id ? 'PUT' : 'POST';
+    setIsUploading(true);
 
     try {
+      let imageUrl = productForm.image;
+      let matureImageUrl = productForm.matureImage;
+
+      // Upload seedling file if chosen
+      if (seedlingFile) {
+        const uploadedUrl = await uploadImageFile(seedlingFile);
+        if (uploadedUrl) imageUrl = uploadedUrl;
+        else {
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      // Upload mature tree file if chosen
+      if (matureFile) {
+        const uploadedUrl = await uploadImageFile(matureFile);
+        if (uploadedUrl) matureImageUrl = uploadedUrl;
+        else {
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      const payload = {
+        ...productForm,
+        image: imageUrl,
+        matureImage: matureImageUrl,
+      };
+
+      const endpoint = editingProduct?.id ? `/api/products/${editingProduct.id}` : '/api/products';
+      const method = editingProduct?.id ? 'PUT' : 'POST';
+
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
           authorization: `Bearer ${adminKey}`,
         },
-        body: JSON.stringify(productForm),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         alert(`Product ${editingProduct ? 'updated' : 'created'} successfully!`);
         setEditingProduct(null);
+        setSeedlingFile(null);
+        setMatureFile(null);
         setProductForm({
           commonName: '',
           binomialName: '',
@@ -153,23 +218,11 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Error saving product:', error);
       alert('Error saving product');
+    } finally {
+      setIsUploading(false);
     }
-  };
+  }
 
-  // Convert uploaded image files to base64 string for direct SQLite storage
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldName: 'image' | 'matureImage') => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductForm((prev) => ({
-          ...prev,
-          [fieldName]: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -258,19 +311,25 @@ export default function AdminPage() {
         {/* Tab Navigation */}
         <div className="flex border-b border-gray-200 mb-8 space-x-4">
           <button
-            onClick={() => setActiveTab('articles')}
+            onClick={() => {
+              setActiveTab('articles');
+              loadArticles();
+            }}
             className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'articles'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-green-600 text-green-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             Articles Management
           </button>
           <button
-            onClick={() => setActiveTab('products')}
+            onClick={() => {
+              setActiveTab('products');
+              loadProducts();
+            }}
             className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'products'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-green-600 text-green-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             Products / Ecommerce
@@ -397,7 +456,7 @@ export default function AdminPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'image')}
+                    onChange={(e) => setSeedlingFile(e.target.files?.[0] || null)}
                     className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
                   {productForm.image && (
@@ -410,7 +469,7 @@ export default function AdminPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'matureImage')}
+                    onChange={(e) => setMatureFile(e.target.files?.[0] || null)}
                     className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
                   {productForm.matureImage && (
@@ -432,9 +491,10 @@ export default function AdminPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition"
+                  disabled={isUploading}
+                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white py-2 rounded-lg font-semibold transition"
                 >
-                  {editingProduct ? 'Update Product' : 'Save Product'}
+                  {isUploading ? 'Uploading & Saving...' : editingProduct ? 'Update Product' : 'Save Product'}
                 </button>
 
                 {editingProduct && (
@@ -442,6 +502,8 @@ export default function AdminPage() {
                     type="button"
                     onClick={() => {
                       setEditingProduct(null);
+                      setSeedlingFile(null);
+                      setMatureFile(null);
                       setProductForm({
                         commonName: '',
                         binomialName: '',
