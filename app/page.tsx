@@ -5,10 +5,10 @@ import Image from "next/image"
 import Navbar from "./components/Navbar"
 import { customers, productItems } from "./constants"
 import { servicesItems } from "./constants"
-import { ArrowDown, Star, ChevronLeft, ChevronRight, ArrowRight, Calendar } from "lucide-react"
+import { ArrowDown, Star, ChevronLeft, ChevronRight, ArrowRight, Calendar, ChevronDown } from "lucide-react"
 import CustomerCarousel from "./components/Socialproof"
 import Footer from "./components/Footer"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
 
 
@@ -32,6 +32,29 @@ interface Product {
   image: string
   matureImage?: string // Image of the grown tree on hover
 }
+
+const faqData = [
+  {
+    question: "Where is Bulbul Farm located and do you deliver across Kenya?",
+    answer: "We are based in Limuru, Kenya. Yes, we deliver tree seedlings across the country through secured transportation arrangements."
+  },
+  {
+    question: "What types of tree seedlings do you supply?",
+    answer: "We supply a wide range of indigenous, exotic, ornamental, fruit, and shade trees suitable for landscaping, reforestation, and smallholder farming."
+  },
+  {
+    question: "Do you offer planting or site assessment services?",
+    answer: "Yes, our team provides site preparation advice, soil consultation, and full-scale tree planting services for residential gardens, corporate grounds, and commercial farms."
+  },
+  {
+    question: "How do I care for seedlings after delivery?",
+    answer: "Upon delivery, keep seedlings in a shaded area and water them regularly before planting. We also provide customized care instructions tailored to the specific tree species you purchase."
+  },
+  {
+    question: "Can I place bulk orders for large projects?",
+    answer: "Absolutely. We cater to individual homeowners, large agricultural projects, schools, and NGOs requiring bulk seedling orders."
+  }
+]
 
 // Animation Variants
 const fadeIn = {
@@ -69,6 +92,11 @@ const staggerContainer = {
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([])
   const [products, setProducts] = useState<Product[]>([])
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index)
+  }
 
   useEffect(() => {
     async function fetchArticles() {
@@ -457,6 +485,61 @@ hover:scale-105"
           <motion.div variants={fadeIn}>
             <CustomerCarousel customers={customers} />
           </motion.div>
+        </div>
+      </motion.section>
+
+
+      {/* FAQ Section */}
+      <motion.section
+        className="py-24 px-6 bg-gray-50"
+        initial="hidden"
+        whileInView="visible"
+        variants={staggerContainer}
+        viewport={{ once: true }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <motion.div className="text-center mb-16" variants={fadeIn}>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Find answers to common questions about our seedlings, ordering, and planting services.
+            </p>
+            <div className="w-24 h-1 bg-green-600 mx-auto mt-6"></div>
+          </motion.div>
+
+          <div className="space-y-4">
+            {faqData.map((faq, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+              >
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full flex justify-between items-center p-6 text-left font-bold text-lg text-gray-900 hover:text-green-600 transition-colors"
+                >
+                  <span>{faq.question}</span>
+                  <ChevronDown
+                    size={22}
+                    className={`text-green-600 transition-transform duration-300 flex-shrink-0 ml-4 ${openFaqIndex === index ? "rotate-180" : ""
+                      }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openFaqIndex === index && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-6 pb-6 text-gray-600 leading-relaxed border-t border-gray-50 pt-4"
+                    >
+                      {faq.answer}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </motion.section>
 
