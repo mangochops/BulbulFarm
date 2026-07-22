@@ -48,10 +48,7 @@ export const navItems = [
     route:"/articles",
     label:"Articles"
   },
-  {
-    route:"/",
-    label:"Customers"
-  },
+  
   {
     route:"/",
     label:"Contact"
