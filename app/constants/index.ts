@@ -33,7 +33,7 @@ export const navItems = [
     label: "Home"
   },
   {
-    route:"/",
+    route:"/about",
     label:"About Us"
   },
   {
