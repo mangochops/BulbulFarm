@@ -50,7 +50,7 @@ export const navItems = [
   },
   
   {
-    route:"/",
+    route:"/contact",
     label:"Contact"
   }
 ]
