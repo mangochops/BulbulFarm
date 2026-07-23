@@ -6,20 +6,10 @@ import Link from "next/link";
 import Navbar from "../components/ArticlesNav";
 import Footer from "../components/Footer";
 import { Search, ArrowUpDown, ShoppingBag } from "lucide-react";
+import { Product } from "../constants";
+import { SortOption } from "../constants";
 
-interface Product {
-  id: number;
-  commonName: string;
-  binomialName: string;
-  description: string;
-  price: string;
-  size: string;
-  image: string;
-  matureImage?: string;
-  created_at?: string;
-}
 
-type SortOption = "featured" | "price-asc" | "price-desc" | "name";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);

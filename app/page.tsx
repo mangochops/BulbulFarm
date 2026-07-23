@@ -10,51 +10,9 @@ import CustomerCarousel from "./components/Socialproof"
 import Footer from "./components/Footer"
 import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
-
-
-interface Article {
-  id: number
-  title: string
-  description: string
-  featured_image: string | null
-  slug: string
-  created_at: string
-  updated_at: string
-}
-
-interface Product {
-  id?: number
-  commonName: string
-  binomialName: string
-  description: string
-  price: string
-  size: string
-  image: string
-  matureImage?: string // Image of the grown tree on hover
-}
-
-const faqData = [
-  {
-    question: "Where is Bulbul Farm located and do you deliver across Kenya?",
-    answer: "We are based in Limuru, Kenya. Yes, we deliver tree seedlings across the country through secured transportation arrangements."
-  },
-  {
-    question: "What types of tree seedlings do you supply?",
-    answer: "We supply a wide range of indigenous, exotic, ornamental, fruit, and shade trees suitable for landscaping, reforestation, and smallholder farming."
-  },
-  {
-    question: "Do you offer planting or site assessment services?",
-    answer: "Yes, our team provides site preparation advice, soil consultation, and full-scale tree planting services for residential gardens, corporate grounds, and commercial farms."
-  },
-  {
-    question: "How do I care for seedlings after delivery?",
-    answer: "Upon delivery, keep seedlings in a shaded area and water them regularly before planting. We also provide customized care instructions tailored to the specific tree species you purchase."
-  },
-  {
-    question: "Can I place bulk orders for large projects?",
-    answer: "Absolutely. We cater to individual homeowners, large agricultural projects, schools, and NGOs requiring bulk seedling orders."
-  }
-]
+import { faqData } from "./constants"
+import { Product } from "./constants"
+import { Article } from "./constants"
 
 // Animation Variants
 const fadeIn = {
@@ -369,6 +327,16 @@ export default function Home() {
               <ChevronRight size={24} />
             </button>
           </div>
+          <motion.div className="text-center" variants={fadeIn}>
+            <Link
+              href="/products"
+              className="inline-flex items-center bg-green-600 hover:bg-green-500 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform 
+hover:scale-105"
+            >
+              View All Products
+              <ArrowRight size={20} className="ml-2" />
+            </Link>
+          </motion.div>
         </div>
       </motion.section>
 

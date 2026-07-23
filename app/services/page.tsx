@@ -7,11 +7,6 @@ import Navbar from "@/app/components/Navbar"
 import Footer from "@/app/components/Footer"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-    Sprout,
-    Shovel,
-    Trees,
-    DraftingCompass,
-    Building2,
     TreePine,
     CheckCircle2,
     ArrowRight,
@@ -21,6 +16,7 @@ import {
     ShieldCheck,
     CalendarCheck
 } from "lucide-react"
+import { detailedServices } from "../constants"
 
 // Animation Variants
 const fadeIn = {
@@ -38,152 +34,9 @@ const staggerContainer = {
     },
 }
 
-interface ServiceDetail {
-    id: string
-    title: string
-    subtitle: string
-    icon: React.ElementType
-    heroImage: string
-    summary: string
-    description: string
-    deliverables: string[]
-    process: { step: string; title: string; desc: string }[]
-    metrics: { label: string; value: string; hint: string }[]
-    graphType: "growth" | "composition" | "timeline"
-}
 
-const detailedServices: ServiceDetail[] = [
-    {
-        id: "seedling-supply",
-        title: "Seedling Nursery & Direct Supply",
-        subtitle: "High-yield, healthy indigenous and exotic varieties grown for maximum resilience.",
-        icon: Sprout,
-        heroImage: "/woodland-silhouette.jpg",
-        summary: "Propagating climate-adapted seedlings with superior survival rates for large and small scale planting.",
-        description: "Our core expertise lies in growing premium-grade tree seedlings inside controlled nursery conditions in Limuru. We manage every stage from seed selection and soil composition to root structure hardening. Whether you need indigenous timber trees, fast-growing shade covers, or commercial fruit orchards, our stock is inspected for disease resistance and outdoor acclimatization prior to delivery.",
-        deliverables: [
-            "Custom seedling batches prepared to target root depths",
-            "Species-specific planting & soil guide manuals",
-            "Secure nationwide distribution logistics",
-            "Bulk trade rates for NGOs, schools, and private estates"
-        ],
-        process: [
-            { step: "01", title: "Species Selection", desc: "Consultation to pick species aligned with your soil profile and climate." },
-            { step: "02", title: "Root Hardening", desc: "Gradual outdoor exposure to ensure high field survival post-transit." },
-            { step: "03", title: "Dispatch & Delivery", desc: "Custom timber/crate transport preserving soil balls and root vitality." }
-        ],
-        metrics: [
-            { label: "Sapling Survival Rate", value: "96.4%", hint: "Based on monitored client plantings" },
-            { label: "Nursery Species Capacity", value: "80+", hint: "Native, exotic, fruit & ornamental" },
-            { label: "Annual Supply Volume", value: "250K+", hint: "Seedlings raised per cycle" }
-        ],
-        graphType: "growth"
-    },
-    {
-        id: "site-assessment",
-        title: "Site Assessment & Soil Consultation",
-        subtitle: "Data-driven land analysis to guarantee long-term canopy performance.",
-        icon: DraftingCompass,
-        heroImage: "/About.jpeg",
-        summary: "Comprehensive site evaluation, soil chemistry testing, and climate pairing prior to planting.",
-        description: "Successful tree growing starts underground. Our agronomy team conducts complete field assessments analyzing pH levels, drainage patterns, compaction, and seasonal rainfall alignment. We eliminate guess-work by providing tailored species mapping so your investment thrives through drought and heavy rainy seasons alike.",
-        deliverables: [
-            "Full soil pH and drainage analytical report",
-            "Micro-climate zoning & windbreak layout plans",
-            "Species compatibility matrix",
-            "Irrigation and soil amendment roadmap"
-        ],
-        process: [
-            { step: "01", title: "Soil Sampling", desc: "Core sample collection across multi-zone land areas." },
-            { step: "02", title: "Data Analysis", desc: "Testing drainage, organic matter, and structural density." },
-            { step: "03", title: "Zoning Strategy", desc: "Drafting precision maps matching trees to exact terrain conditions." }
-        ],
-        metrics: [
-            { label: "Tested Acres", value: "1,200+", hint: "Across diverse regions in Kenya" },
-            { label: "Growth Boost", value: "+35%", hint: "Faster maturation vs unassessed soil" },
-            { label: "Soil Accuracy", value: "99%", hint: "Lab-backed nutrient profile reporting" }
-        ],
-        graphType: "composition"
-    },
-    {
-        id: "turnkey-planting",
-        title: "Turnkey Tree Planting Services",
-        subtitle: "End-to-end execution from ground prep to complete plantation deployment.",
-        icon: Shovel,
-        heroImage: "/woodland-silhouette.jpg",
-        summary: "Full site clearance, pit digging, soil conditioning, and professional seedling planting.",
-        description: "Avoid labor bottlenecks and improper planting depths with our full-service execution team. We manage site preparation, pit sizing ($60\text{cm} \times 60\text{cm}$ standard), compost enrichment, root positioning, and initial hydration. Designed for farm owners, institutions, and residential developments looking for seamless execution.",
-        deliverables: [
-            "Mechanized or manual hole excavation & spacing",
-            "Organic manure & water-retention hydrogel integration",
-            "Root collar positioning & initial deep watering",
-            "Protective staking and tree-guard setup"
-        ],
-        process: [
-            { step: "01", title: "Land Clearing", desc: "Obstacle removal, pit marking, and hole excavation." },
-            { step: "02", title: "Soil Enrichment", desc: "Mixing native soil with cured manure and hydro-gel." },
-            { step: "03", title: "Precision Planting", desc: "Root alignment, backfilling, tamping, and initial soaking." }
-        ],
-        metrics: [
-            { label: "Pits Dug Per Day", value: "2,500+", hint: "Deployment capacity with full crews" },
-            { label: "Labor Efficiency", value: "100%", hint: "Supervised by certified agronomists" },
-            { label: "Root Shock Reduced", value: "85%", hint: "Via proper moisture retention techniques" }
-        ],
-        graphType: "timeline"
-    },
-    {
-        id: "landscape-design",
-        title: "Landscape Architecture & Shade Planning",
-        subtitle: "Transforming acreage into functional, aesthetic, and sustainable green ecosystems.",
-        icon: Trees,
-        heroImage: "/About.jpeg",
-        summary: "Master planning for aesthetic estates, windbreaks, privacy hedges, and residential lawns.",
-        description: "Trees define landscapes for decades. Our design team blends functional goals—like wind attenuation, solar shade, and privacy—with visual harmony. We create master landscape layouts combining flowering ornamentals with majestic canopy trees to increase property valuation and ecological health.",
-        deliverables: [
-            "2D/3D master landscape layout blueprints",
-            "Canopy progression & shade projection maps",
-            "Ornamental and indigenous hedge design",
-            "Seasonal flowering schedule integration"
-        ],
-        process: [
-            { step: "01", title: "Vision Mapping", desc: "Defining aesthetic goals, privacy needs, and walkways." },
-            { step: "02", title: "3D Layout Design", desc: "Visualizing mature tree canopies and shade shadows." },
-            { step: "03", title: "Execution Plan", desc: "Phased planting sequence for short and long term growth." }
-        ],
-        metrics: [
-            { label: "Estates Designed", value: "150+", hint: "Private gardens & commercial grounds" },
-            { label: "Property Value Gain", value: "~15%", hint: "Average boost post-landscaping" },
-            { label: "Shade Coverage", value: "Optimal", hint: "Calculated for high-sun exposure regions" }
-        ],
-        graphType: "growth"
-    },
-    {
-        id: "reforestation",
-        title: "Commercial Reforestation & Agroforestry",
-        subtitle: "Scalable timber, fruit, and conservation forestry projects built for longevity.",
-        icon: Building2,
-        heroImage: "/woodland-silhouette.jpg",
-        summary: "Large-scale ecological restoration and economic forestry for institutions and farms.",
-        description: "We work with landholders, corporate bodies, and environmental initiatives to establish multi-acre forests. From sustainable timber species to agroforestry models that combine fruit trees with cash crops, we deliver scalable ecological solutions designed for environmental impact and economic yield.",
-        deliverables: [
-            "High-density grid design for forestry",
-            "Agroforestry intercropping blueprints",
-            "Carbon offset and canopy density reporting",
-            "Long-term plantation management guidelines"
-        ],
-        process: [
-            { step: "01", title: "Grid Planning", desc: "Optimizing density per hectare for target yields." },
-            { step: "02", title: "Mass Deployment", desc: "Synchronized crew planting during optimal rainy windows." },
-            { step: "03", title: "Monitored Growth", desc: "Periodic health audits and pruning schedules." }
-        ],
-        metrics: [
-            { label: "Acres Restored", value: "450+", hint: "Dedicated forest & agroforestry projects" },
-            { label: "Trees Planted", value: "500K+", hint: "Cumulative impact across key regions" },
-            { label: "Carbon Absorption", value: "High", hint: "Long-term sequestering native trees" }
-        ],
-        graphType: "timeline"
-    }
-]
+
+
 
 // Visual Component for Graph Displays
 function ServiceVisualGraph({ type, title }: { type: "growth" | "composition" | "timeline"; title: string }) {
@@ -359,7 +212,7 @@ export default function ServicesPage() {
                     className="object-cover opacity-20"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/90 to-gray-50"></div>
+                <div className="absolute inset-0 "></div>
 
                 <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6 pt-10">
                     <motion.div
@@ -504,7 +357,7 @@ export default function ServicesPage() {
                                     Need custom volume seedling supply or an on-site evaluation in Limuru or anywhere across Kenya?
                                 </p>
                                 <Link
-                                    href="/#contact"
+                                    href="/contact"
                                     className="inline-flex items-center justify-center w-full bg-white text-green-800 hover:bg-green-50 font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:scale-[1.02]"
                                 >
                                     Book Consultation <ArrowRight size={18} className="ml-2" />

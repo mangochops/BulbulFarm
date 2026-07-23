@@ -60,7 +60,7 @@ const CustomerCarousel: React.FC<CustomerCarouselProps> = ({ customers }) => {
 
           {/* Testimonial Text */}
           <blockquote className="text-xl md:text-2xl text-gray-700 font-light italic mb-6 leading-relaxed">
-            `&quot;`{customers[currentIndex].feedback}`&quot;`
+            {customers[currentIndex].feedback}
           </blockquote>
 
           {/* Customer Name */}
@@ -90,9 +90,8 @@ const CustomerCarousel: React.FC<CustomerCarouselProps> = ({ customers }) => {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "bg-green-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
-            }`}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-green-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
+              }`}
           />
         ))}
       </div>

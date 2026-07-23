@@ -75,7 +75,7 @@ export default function ContactPage() {
                     className="object-cover opacity-20"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/90 to-gray-50"></div>
+                <div className="absolute inset-0 "></div>
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 pt-10">
                     <motion.div
@@ -216,8 +216,8 @@ export default function ContactPage() {
                             </div>
 
                             {/* Subtle Decorative Background Bubbles */}
-                            <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-green-400/10 rounded-full blur-xl"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
                         </div>
 
                         {/* Right Interactive Form Panel */}

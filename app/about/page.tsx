@@ -7,17 +7,15 @@ import Navbar from "@/app/components/Navbar"
 import Footer from "@/app/components/Footer"
 import { motion } from "framer-motion"
 import {
-    ShieldCheck,
     MapPin,
-    Leaf,
-    HeartHandshake,
-    Globe2,
     ArrowRight,
     CheckCircle2,
     TreePine,
     Target,
     Eye
 } from "lucide-react"
+import { values } from "../constants"
+import { milestones } from "../constants"
 
 // Animation Variants
 const fadeIn = {
@@ -35,35 +33,6 @@ const staggerContainer = {
     },
 }
 
-const values = [
-    {
-        icon: Leaf,
-        title: "Ecological Integrity",
-        description: "We propagate climate-resilient indigenous and exotic species nurtured without harsh synthetic shortcuts."
-    },
-    {
-        icon: ShieldCheck,
-        title: "Quality First",
-        description: "Every seedling undergoes strict root-hardening and disease-screening protocols before leaving our nursery."
-    },
-    {
-        icon: HeartHandshake,
-        title: "Community Growth",
-        description: "Partnering with local farmers, institutions, and conservationists to create sustainable green economies."
-    },
-    {
-        icon: Globe2,
-        title: "Reforestation Commitment",
-        description: "Dedicated to restoring local biodiversity and increasing canopy coverage across Kenya."
-    }
-]
-
-const milestones = [
-    { year: "2023", title: "Farm Established", desc: "Bulbul Farm was founded in Limuru, Kenya, starting with a core nursery of 10 native species." },
-    { year: "2024", title: "Expanded Nursery", desc: "Scaled production capacity to over 100,000 seedlings with automated drip propagation systems." },
-    { year: "2025", title: "Turnkey Planting Launch", desc: "Introduced end-to-end site evaluation, soil testing, and professional planting teams." },
-    { year: "2026", title: "Nationwide Impact", desc: "Crossed 500,000+ trees planted and extended delivery networks across the entire country." }
-]
 
 export default function AboutPage() {
     return (
@@ -81,7 +50,7 @@ export default function AboutPage() {
                     className="object-cover opacity-25"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/90 to-gray-50"></div>
+                <div className="absolute inset-0 "></div>
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 pt-10">
                     <motion.div

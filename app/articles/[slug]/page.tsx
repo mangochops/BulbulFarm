@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getAllArticles } from '@/lib/db';
 import { ShareButtons } from '@/app/components/ShareButtons';
+import Navbar from "@/app/components/ArticlesNav"
+import Footer from "@/app/components/Footer"
 
 interface ArticlePageProps {
   params: {
@@ -35,8 +37,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-8 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white pt-8 ">
+      <header>
+        <Navbar />
+      </header>
+      <div className="max-w-6xl py-16 mx-auto">
         <Link href="/articles" className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold mb-8 group">
           <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -125,6 +130,8 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
