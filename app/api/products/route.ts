@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
-import path from 'path';
+import { createClient } from '@libsql/client';
 
-const dbPath = path.join(process.cwd(), 'database.db');
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL || '',
+  authToken: process.env.TURSO_AUTH_TOKEN || '',
+});
 
-function getDB() {
-  const db = new Database(dbPath);
-  db.pragma('journal_mode = WAL');
-  db.exec(`
+async function initDB() {
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       commonName TEXT NOT NULL,
@@ -20,15 +20,14 @@ function getDB() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
-  return db;
 }
 
 // GET /api/products
 export async function GET() {
   try {
-    const db = getDB();
-    const products = db.prepare('SELECT * FROM products ORDER BY id DESC').all();
-    return NextResponse.json(products);
+    await initDB();
+    const result = await db.execute('SELECT * FROM products ORDER BY id DESC');
+    return NextResponse.json(result.rows);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
@@ -48,24 +47,25 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { commonName, binomialName, description, price, size, image, matureImage } = body;
 
-    const db = getDB();
-    const stmt = db.prepare(`
-      INSERT INTO products (commonName, binomialName, description, price, size, image, matureImage)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    const result = stmt.run(
-      commonName || '',
-      binomialName || '',
-      description || '',
-      price || '',
-      size || '',
-      image || '',
-      matureImage || ''
-    );
+    await initDB();
+    const result = await db.execute({
+      sql: `
+        INSERT INTO products (commonName, binomialName, description, price, size, image, matureImage)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [
+        commonName || '',
+        binomialName || '',
+        description || '',
+        price || '',
+        size || '',
+        image || '',
+        matureImage || '',
+      ],
+    });
 
     return NextResponse.json(
-      { message: 'Product created successfully', id: result.lastInsertRowid },
+      { message: 'Product created successfully', id: Number(result.lastInsertRowid) },
       { status: 201 }
     );
   } catch (error) {
