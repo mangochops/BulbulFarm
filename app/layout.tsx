@@ -14,9 +14,26 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Bulbul Farm",
-  description: "Home for Indeginous trees",
-};
+  title: {
+    template: '%s | Bulbul Farm Kenya',
+    default: 'Bulbul Farm | Premium Tree Seedlings in Limuru, Kenya',
+  },
+  description: 'Top-quality indigenous and exotic tree seedlings, site assessments, and turnkey planting services across Kenya.',
+  keywords: ['Tree seedlings Kenya', 'Reforestation', 'Limuru nursery', 'Indigenous trees', 'Agroforestry'],
+  openGraph: {
+    title: 'Bulbul Farm Kenya',
+    description: 'Growing a Greener Future Since 2023.',
+    url: 'https://bulbulfarm.co.ke',
+    siteName: 'Bulbul Farm',
+    locale: 'en_KE',
+    type: 'website',
+  },
+  // GEO: Giving AI clear instructions about your business entity
+  other: {
+    'business:contact_data:locality': 'Limuru',
+    'business:contact_data:country_name': 'Kenya',
+  }
+}
 
 export default function RootLayout({
   children,
