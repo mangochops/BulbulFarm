@@ -135,13 +135,19 @@ export default function Home() {
             variants={fadeIn}
             transition={{ delay: 0.9 }}
           >
-            <button className="group bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-              Explore Our Trees
-              <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </button>
-            <button className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300">
+            <Link
+              href="/products" // or "/seedlings" / "/catalogue" depending on your trees page route
+              className="group inline-flex items-center justify-center bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+            >
+              <span>Explore Our Trees</span>
+              <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true">→</span>
+            </Link>
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300"
+            >
               Learn More
-            </button>
+            </Link>
           </motion.div>
 
           <motion.div className="mt-12" variants={fadeIn} transition={{ delay: 1.1 }}>
