@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useState } from 'react';
 import ArticleForm from '@/app/components/ArticleForm';
+import { UploadButton } from '@/lib/uploadthing';
 
 interface Article {
   id: number;
@@ -50,9 +51,10 @@ export default function AdminPage() {
     matureImage: '',
   });
 
-  const [seedlingFile, setSeedlingFile] = useState<File | null>(null);
-  const [matureFile, setMatureFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [seedlingFile, setSeedlingFile] = useState<File | null>(null);
+  // const [matureFile, setMatureFile] = useState<File | null>(null);
+  // const [isUploading, setIsUploading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,69 +124,40 @@ export default function AdminPage() {
   };
 
   // Convert uploaded image files to base64 string for direct SQLite storage
-  const uploadImageFile = async (file: File): Promise<string | null> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', 'products');
+  // const uploadImageFile = async (file: File): Promise<string | null> => {
+  //   const formData = new FormData();
+  //   formData.append('file', file);
+  //   formData.append('folder', 'products');
 
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${adminKey}`,
-        },
-        body: formData,
-      });
+  //   try {
+  //     const res = await fetch('/api/upload', {
+  //       method: 'POST',
+  //       headers: {
+  //         authorization: `Bearer ${adminKey}`,
+  //       },
+  //       body: formData,
+  //     });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert(`Image upload failed: ${errorData.error || 'Server error'}`);
-        return null;
-      }
+  //     if (!res.ok) {
+  //       const errorData = await res.json();
+  //       alert(`Image upload failed: ${errorData.error || 'Server error'}`);
+  //       return null;
+  //     }
 
-      const data = await res.json();
-      return data.url; // e.g. "/uploads/products/172158...-file.jpg"
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      return null;
-    }
-  };
+  //     const data = await res.json();
+  //     return data.url; // e.g. "/uploads/products/172158...-file.jpg"
+  //   } catch (error) {
+  //     console.error('Error uploading image:', error);
+  //     return null;
+  //   }
+  // };
 
   // Product Form Handlers
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsUploading(true);
+    setIsSubmitting(true);
 
     try {
-      let imageUrl = productForm.image;
-      let matureImageUrl = productForm.matureImage;
-
-      // Upload seedling file if chosen
-      if (seedlingFile) {
-        const uploadedUrl = await uploadImageFile(seedlingFile);
-        if (uploadedUrl) imageUrl = uploadedUrl;
-        else {
-          setIsUploading(false);
-          return;
-        }
-      }
-
-      // Upload mature tree file if chosen
-      if (matureFile) {
-        const uploadedUrl = await uploadImageFile(matureFile);
-        if (uploadedUrl) matureImageUrl = uploadedUrl;
-        else {
-          setIsUploading(false);
-          return;
-        }
-      }
-
-      const payload = {
-        ...productForm,
-        image: imageUrl,
-        matureImage: matureImageUrl,
-      };
-
       const endpoint = editingProduct?.id ? `/api/products/${editingProduct.id}` : '/api/products';
       const method = editingProduct?.id ? 'PUT' : 'POST';
 
@@ -194,14 +167,12 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
           authorization: `Bearer ${adminKey}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(productForm),
       });
 
       if (response.ok) {
         alert(`Product ${editingProduct ? 'updated' : 'created'} successfully!`);
         setEditingProduct(null);
-        setSeedlingFile(null);
-        setMatureFile(null);
         setProductForm({
           commonName: '',
           binomialName: '',
@@ -219,9 +190,9 @@ export default function AdminPage() {
       console.error('Error saving product:', error);
       alert('Error saving product');
     } finally {
-      setIsUploading(false);
+      setIsSubmitting(false);
     }
-  }
+  };
 
 
   const handleEditProduct = (product: Product) => {
@@ -453,11 +424,17 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Seedling Image URL (Primary)</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setSeedlingFile(e.target.files?.[0] || null)}
-                    className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                    <UploadButton
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res: { ufsUrl: string }[]) => {
+                      if (res?.[0]) {
+                      setProductForm((prev) => ({ ...prev, image: res[0].ufsUrl }));
+                      alert('Seedling image uploaded successfully!');
+                      }
+                    }}
+                    onUploadError={(error: Error) => {
+                      alert(`Upload failed: ${error.message}`);
+                    }}
                   />
                   {productForm.image && (
                     <div className="mt-2 text-xs text-green-600 font-medium">✓ Seedling image attached</div>
@@ -466,11 +443,17 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Grown Tree Image URL (Hover)</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setMatureFile(e.target.files?.[0] || null)}
-                    className="w-full p-2 border rounded-lg text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                    <UploadButton
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res: { ufsUrl: string }[]) => {
+                      if (res?.[0]) {
+                      setProductForm((prev) => ({ ...prev, matureImage: res[0].ufsUrl }));
+                      alert('Mature tree image uploaded successfully!');
+                      }
+                    }}
+                    onUploadError={(error: Error) => {
+                      alert(`Upload failed: ${error.message}`);
+                    }}
                   />
                   {productForm.matureImage && (
                     <div className="mt-2 text-xs text-green-600 font-medium">✓ Grown tree image attached</div>
@@ -491,10 +474,10 @@ export default function AdminPage() {
 
                 <button
                   type="submit"
-                  disabled={isUploading}
+                  disabled={isSubmitting}
                   className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white py-2 rounded-lg font-semibold transition"
                 >
-                  {isUploading ? 'Uploading & Saving...' : editingProduct ? 'Update Product' : 'Save Product'}
+                  {isSubmitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Save Product'}
                 </button>
 
                 {editingProduct && (
@@ -502,8 +485,6 @@ export default function AdminPage() {
                     type="button"
                     onClick={() => {
                       setEditingProduct(null);
-                      setSeedlingFile(null);
-                      setMatureFile(null);
                       setProductForm({
                         commonName: '',
                         binomialName: '',
