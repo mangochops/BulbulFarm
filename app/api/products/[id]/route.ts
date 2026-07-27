@@ -31,8 +31,9 @@ export async function GET(req: NextRequest, { params }: Props) {
     }
 
     return NextResponse.json(result.rows[0]);
-  } catch (error: any) {
-    console.error('Error fetching product:', error?.message || error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error fetching product:', message);
     return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
 }
@@ -75,8 +76,9 @@ export async function PUT(req: NextRequest, { params }: Props) {
     }
 
     return NextResponse.json({ message: 'Product updated successfully' });
-  } catch (error: any) {
-    console.error('Error updating product:', error?.message || error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error updating product:', message);
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -103,8 +105,9 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     }
 
     return NextResponse.json({ message: 'Product deleted successfully' });
-  } catch (error: any) {
-    console.error('Error deleting product:', error?.message || error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error deleting product:', message);
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }
