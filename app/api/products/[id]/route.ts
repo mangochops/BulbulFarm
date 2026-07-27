@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
-import path from 'path';
+import { createClient } from '@libsql/client/web';
 
-const dbPath = path.join(process.cwd(), 'database.db');
+function getDbClient() {
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
 
-function getDB() {
-  return new Database(dbPath);
+  if (!url || !authToken) {
+    throw new Error('TURSO_DATABASE_URL or TURSO_AUTH_TOKEN is missing.');
+  }
+
+  return createClient({ url, authToken });
 }
 
 type Props = {
@@ -16,16 +20,19 @@ type Props = {
 export async function GET(req: NextRequest, { params }: Props) {
   try {
     const { id } = await params;
-    const db = getDB();
-    const product = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
+    const db = getDbClient();
+    const result = await db.execute({
+      sql: 'SELECT * FROM products WHERE id = ?',
+      args: [id],
+    });
 
-    if (!product) {
+    if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    return NextResponse.json(product);
-  } catch (error) {
-    console.error('Error fetching product:', error);
+    return NextResponse.json(result.rows[0]);
+  } catch (error: any) {
+    console.error('Error fetching product:', error?.message || error);
     return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
 }
@@ -33,7 +40,7 @@ export async function GET(req: NextRequest, { params }: Props) {
 // PUT /api/products/[id]
 export async function PUT(req: NextRequest, { params }: Props) {
   try {
-    const adminKey = process.env.ADMIN_KEY;
+    const adminKey = process.env.ADMIN_KEY || process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     const authHeader = req.headers.get('authorization');
 
     if (adminKey && authHeader !== `Bearer ${adminKey}`) {
@@ -44,31 +51,32 @@ export async function PUT(req: NextRequest, { params }: Props) {
     const body = await req.json();
     const { commonName, binomialName, description, price, size, image, matureImage } = body;
 
-    const db = getDB();
-    const stmt = db.prepare(`
-      UPDATE products 
-      SET commonName = ?, binomialName = ?, description = ?, price = ?, size = ?, image = ?, matureImage = ?
-      WHERE id = ?
-    `);
+    const db = getDbClient();
+    const result = await db.execute({
+      sql: `
+        UPDATE products 
+        SET commonName = ?, binomialName = ?, description = ?, price = ?, size = ?, image = ?, matureImage = ?
+        WHERE id = ?
+      `,
+      args: [
+        commonName || '',
+        binomialName || '',
+        description || '',
+        price || '',
+        size || '',
+        image || '',
+        matureImage || '',
+        id,
+      ],
+    });
 
-    const result = stmt.run(
-      commonName || '',
-      binomialName || '',
-      description || '',
-      price || '',
-      size || '',
-      image || '',
-      matureImage || '',
-      id
-    );
-
-    if (result.changes === 0) {
+    if (result.rowsAffected === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     return NextResponse.json({ message: 'Product updated successfully' });
-  } catch (error) {
-    console.error('Error updating product:', error);
+  } catch (error: any) {
+    console.error('Error updating product:', error?.message || error);
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -76,7 +84,7 @@ export async function PUT(req: NextRequest, { params }: Props) {
 // DELETE /api/products/[id]
 export async function DELETE(req: NextRequest, { params }: Props) {
   try {
-    const adminKey = process.env.ADMIN_KEY;
+    const adminKey = process.env.ADMIN_KEY || process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     const authHeader = req.headers.get('authorization');
 
     if (adminKey && authHeader !== `Bearer ${adminKey}`) {
@@ -84,17 +92,19 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     }
 
     const { id } = await params;
-    const db = getDB();
-    const stmt = db.prepare('DELETE FROM products WHERE id = ?');
-    const result = stmt.run(id);
+    const db = getDbClient();
+    const result = await db.execute({
+      sql: 'DELETE FROM products WHERE id = ?',
+      args: [id],
+    });
 
-    if (result.changes === 0) {
+    if (result.rowsAffected === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     return NextResponse.json({ message: 'Product deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting product:', error);
+  } catch (error: any) {
+    console.error('Error deleting product:', error?.message || error);
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }
