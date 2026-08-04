@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
+import { createClient } from '@libsql/client/web';
 
 const db = createClient({
   url: process.env.TURSO_DATABASE_URL || '',
@@ -37,7 +37,7 @@ export async function GET() {
 // POST /api/products
 export async function POST(req: NextRequest) {
   try {
-    const adminKey = process.env.ADMIN_KEY;
+    const adminKey = process.env.ADMIN_KEY || process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     const authHeader = req.headers.get('authorization');
 
     if (adminKey && authHeader !== `Bearer ${adminKey}`) {
