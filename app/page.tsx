@@ -316,11 +316,14 @@ export default function Home() {
                     <p className="text-gray-600 mb-4 line-clamp-3">{product.description}</p>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold text-gray-900">{product.price}</span>
-                      <button className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
-                        Add to Cart
-                      </button>
-                    </div>
+                <span className="text-2xl font-bold text-gray-900">{product.price}</span>
+                <Link
+                  href={`/products/${product.id}`}
+                  className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg inline-block text-center"
+                >
+                  View Product
+                </Link>
+              </div>
                   </div>
                 </motion.div>
               ))}
