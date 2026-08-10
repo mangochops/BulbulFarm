@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import { createClient } from "@libsql/client/web";
 import Navbar from "@/app/components/ArticlesNav";
 import Footer from "@/app/components/Footer";
@@ -52,6 +53,56 @@ async function getProduct(id: string): Promise<Product | null> {
     console.error("Error fetching product:", error);
     return null;
   }
+}
+
+// Generate Open Graph & Twitter metadata for WhatsApp previews
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProduct(id);
+
+  if (!product) {
+    return {
+      title: "Product Not Found | Bulbul Farm",
+    };
+  }
+
+  const title = `${product.commonName} (${product.binomialName}) | Bulbul Farm Kenya`;
+  const description =
+    product.description?.slice(0, 160) || "Buy quality indigenous seedlings at Bulbul Farm.";
+  const baseUrl = "https://bulbulfarm.co.ke";
+  const pageUrl = `${baseUrl}/products/${product.id}`;
+
+  // Fallback to absolute domain URL if image is a relative path
+  const imageUrl = product.image?.startsWith("http")
+    ? product.image
+    : `${baseUrl}${product.image || "/placeholder.svg"}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: "Bulbul Farm",
+      locale: "en_KE",
+      type: "website",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.commonName,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
 }
 
 export default async function ProductDetailsPage({ params }: ProductPageProps) {
