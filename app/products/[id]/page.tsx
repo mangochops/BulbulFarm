@@ -138,6 +138,15 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
     },
   };
 
+// Generate the pre-filled WhatsApp message
+const whatsappMessage = encodeURIComponent(
+  `Hello Bulbul Farm, I would like to order the ${product.commonName} (${product.binomialName}) seedling priced at ${product.price}.\n\nProduct Link: https://bulbulfarm.co.ke/products/${product.id}`
+);
+
+// Replace with your actual business WhatsApp phone number (include country code without +)
+const whatsappNumber = "254726931982"; 
+const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-8 px-4">
       {/* Inject Schema.org JSON-LD */}
@@ -224,9 +233,14 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            <button className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.01]">
-              Order Seedling
-            </button>
+            <a
+    href={whatsappUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] block text-center"
+  >
+    Order Seedling via WhatsApp
+  </a>
           </div>
         </div>
       </div>
