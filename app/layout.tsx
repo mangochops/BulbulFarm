@@ -33,6 +33,7 @@ export const metadata: Metadata = {
   other: {
     'business:contact_data:locality': 'Limuru',
     'business:contact_data:country_name': 'Kenya',
+    'google-adsense-account': 'ca-pub-6543744206310545',
   }
 }
 
