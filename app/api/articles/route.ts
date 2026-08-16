@@ -1,7 +1,6 @@
 import { getAllArticles, createArticle, slugify } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+
 
 export async function GET() {
   try {
@@ -15,47 +14,29 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const adminKey = process.env.ADMIN_KEY;
+    // Check Authorization
+    const expectedKey = process.env.ADMIN_KEY || process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     const authHeader = request.headers.get('authorization');
 
-    if (!adminKey || authHeader !== `Bearer ${adminKey}`) {
+    if (!expectedKey || authHeader !== `Bearer ${expectedKey}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const formData = await request.formData();
-    const title = formData.get('title') as string;
-    const description = formData.get('description') as string;
-    const file = formData.get('featured_image') as File | null;
+    const { title, description, featured_image } = await request.json();
 
     if (!title || !description) {
       return NextResponse.json({ error: 'Title and description are required' }, { status: 400 });
     }
 
-    let imagePath = null;
-
-    if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Create articles directory if it doesn't exist
-      const articlesDir = path.join(process.cwd(), 'public', 'articles');
-      if (!fs.existsSync(articlesDir)) {
-        fs.mkdirSync(articlesDir, { recursive: true });
-      }
-
-      // Generate filename with timestamp
-      const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-      const filepath = path.join(articlesDir, filename);
-      fs.writeFileSync(filepath, buffer);
-      imagePath = `/articles/${filename}`;
-    }
-
     const slug = slugify(title);
-    const article = createArticle(title, description, imagePath, slug);
+    const article = createArticle(title, description, featured_image || null, slug);
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
     console.error('Error creating article:', error);
-    return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create article' },
+      { status: 500 }
+    );
   }
 }
