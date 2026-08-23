@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ArticlesPage() {
-  const articles = getAllArticles();
+export default async function ArticlesPage() {
+  const articles = await getAllArticles();
 
   // 2. CollectionPage & ItemList Schema (JSON-LD) for Search Engines & AI Crawlers
   const jsonLd = {

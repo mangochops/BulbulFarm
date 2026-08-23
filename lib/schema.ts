@@ -6,7 +6,7 @@ export const articles = sqliteTable('articles', {
   title: text('title').notNull(),
   description: text('description').notNull(),
   slug: text('slug').notNull().unique(),
-  imagePath: text('image_path'),
+  featured_image: text('featured_image'),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),

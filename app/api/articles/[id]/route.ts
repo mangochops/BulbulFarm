@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const id = parseInt(params.id);
-    const article = getArticleById(id);
+    const article = await getArticleById(id);
 
     if (!article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
@@ -35,7 +35,7 @@ export async function PUT(
     }
 
     const id = parseInt(params.id);
-    const article = getArticleById(id);
+    const article = await getArticleById(id);
 
     if (!article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
@@ -98,7 +98,7 @@ export async function DELETE(
     }
 
     const id = parseInt(params.id);
-    const article = getArticleById(id);
+    const article = await getArticleById(id);
 
     if (!article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
