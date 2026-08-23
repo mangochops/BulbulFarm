@@ -18,7 +18,7 @@ export async function initializeSchema() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       description TEXT NOT NULL,
-      featured_image TEXT,
+      imagePath TEXT,
       slug TEXT UNIQUE NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -34,7 +34,7 @@ export interface Article {
   id: number;
   title: string;
   description: string;
-  featured_image: string | null;
+  imagePath: string | null;
   slug: string;
   created_at: string;
   updated_at: string;
@@ -67,13 +67,13 @@ export async function getArticleById(id: number): Promise<Article | undefined> {
 export async function createArticle(
   title: string,
   description: string,
-  featured_image: string | null,
+  imagePath: string | null,
   slug: string
 ): Promise<Article> {
   await initializeSchema();
   const result = await db.execute({
-    sql: 'INSERT INTO articles (title, description, featured_image, slug) VALUES (?, ?, ?, ?)',
-    args: [title, description, featured_image, slug],
+    sql: 'INSERT INTO articles (title, description, imagePath, slug) VALUES (?, ?, ?, ?)',
+    args: [title, description, imagePath, slug],
   });
 
   const insertedId = Number(result.lastInsertRowid);
@@ -85,13 +85,13 @@ export async function updateArticle(
   id: number,
   title: string,
   description: string,
-  featured_image: string | null,
+  imagePath: string | null,
   slug: string
 ): Promise<Article> {
   await initializeSchema();
   await db.execute({
-    sql: 'UPDATE articles SET title = ?, description = ?, featured_image = ?, slug = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-    args: [title, description, featured_image, slug, id],
+    sql: 'UPDATE articles SET title = ?, description = ?, imagePath = ?, slug = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    args: [title, description, imagePath, slug, id],
   });
 
   const article = await getArticleById(id);
