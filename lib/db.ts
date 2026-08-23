@@ -1,29 +1,20 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-import fs from 'fs';
+import { createClient } from '@libsql/client';
 
-const dbPath = path.join(process.cwd(), 'data', 'articles.db');
+const url = process.env.TURSO_DATABASE_URL || 'file:data/articles.db';
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
-let db: Database.Database;
+export const db = createClient({
+  url,
+  authToken,
+});
 
-export function getDB() {
-  if (!db) {
-    // Ensure the data directory exists
-    const dataDir = path.dirname(dbPath);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    
-    db = new Database(dbPath);
-    db.pragma('journal_mode = WAL');
-    initializeSchema();
-  }
-  return db;
-}
+let isInitialized = false;
 
-function initializeSchema() {
-  const schema = `
-    CREATE TABLE IF NOT EXISTS articles (
+export async function initializeSchema() {
+  if (isInitialized) return;
+
+  await db.batch([
+    `CREATE TABLE IF NOT EXISTS articles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       description TEXT NOT NULL,
@@ -31,20 +22,12 @@ function initializeSchema() {
       slug TEXT UNIQUE NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+    );`,
+    `CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);`,
+    `CREATE INDEX IF NOT EXISTS idx_articles_created_at ON articles(created_at);`
+  ], 'write');
 
-    CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);
-    CREATE INDEX IF NOT EXISTS idx_articles_created_at ON articles(created_at);
-  `;
-
-  const statements = schema.split(';').filter(s => s.trim());
-  statements.forEach(statement => {
-    try {
-      db.exec(statement);
-    } catch (error) {
-      console.error('Error executing statement:', statement, error);
-    }
-  });
+  isInitialized = true;
 }
 
 export interface Article {
@@ -57,53 +40,70 @@ export interface Article {
   updated_at: string;
 }
 
-export function getAllArticles(): Article[] {
-  const db = getDB();
-  return db.prepare('SELECT * FROM articles ORDER BY created_at DESC').all() as Article[];
+export async function getAllArticles(): Promise<Article[]> {
+  await initializeSchema();
+  const result = await db.execute('SELECT * FROM articles ORDER BY created_at DESC');
+  return result.rows as unknown as Article[];
 }
 
-export function getArticleBySlug(slug: string): Article | undefined {
-  const db = getDB();
-  return db.prepare('SELECT * FROM articles WHERE slug = ?').get(slug) as Article | undefined;
+export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
+  await initializeSchema();
+  const result = await db.execute({
+    sql: 'SELECT * FROM articles WHERE slug = ?',
+    args: [slug],
+  });
+  return result.rows[0] as unknown as Article | undefined;
 }
 
-export function createArticle(
+export async function getArticleById(id: number): Promise<Article | undefined> {
+  await initializeSchema();
+  const result = await db.execute({
+    sql: 'SELECT * FROM articles WHERE id = ?',
+    args: [id],
+  });
+  return result.rows[0] as unknown as Article | undefined;
+}
+
+export async function createArticle(
   title: string,
   description: string,
   featured_image: string | null,
   slug: string
-): Article {
-  const db = getDB();
-  const result = db.prepare(
-    'INSERT INTO articles (title, description, featured_image, slug) VALUES (?, ?, ?, ?)'
-  ).run(title, description, featured_image, slug);
+): Promise<Article> {
+  await initializeSchema();
+  const result = await db.execute({
+    sql: 'INSERT INTO articles (title, description, featured_image, slug) VALUES (?, ?, ?, ?)',
+    args: [title, description, featured_image, slug],
+  });
 
-  return getArticleById(result.lastInsertRowid as number)!;
+  const insertedId = Number(result.lastInsertRowid);
+  const article = await getArticleById(insertedId);
+  return article!;
 }
 
-export function updateArticle(
+export async function updateArticle(
   id: number,
   title: string,
   description: string,
   featured_image: string | null,
   slug: string
-): Article {
-  const db = getDB();
-  db.prepare(
-    'UPDATE articles SET title = ?, description = ?, featured_image = ?, slug = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-  ).run(title, description, featured_image, slug, id);
+): Promise<Article> {
+  await initializeSchema();
+  await db.execute({
+    sql: 'UPDATE articles SET title = ?, description = ?, featured_image = ?, slug = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    args: [title, description, featured_image, slug, id],
+  });
 
-  return getArticleById(id)!;
+  const article = await getArticleById(id);
+  return article!;
 }
 
-export function deleteArticle(id: number): void {
-  const db = getDB();
-  db.prepare('DELETE FROM articles WHERE id = ?').run(id);
-}
-
-export function getArticleById(id: number): Article | undefined {
-  const db = getDB();
-  return db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as Article | undefined;
+export async function deleteArticle(id: number): Promise<void> {
+  await initializeSchema();
+  await db.execute({
+    sql: 'DELETE FROM articles WHERE id = ?',
+    args: [id],
+  });
 }
 
 export function slugify(text: string): string {
