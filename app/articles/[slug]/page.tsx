@@ -12,14 +12,14 @@ interface ArticlePageProps {
 }
 
 export async function generateStaticParams() {
-  const articles = getAllArticles();
+  const articles = await getAllArticles();
   return articles.map((article) => ({
     slug: article.slug,
   }));
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const articles = getAllArticles();
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const articles = await getAllArticles();
   const article = articles.find((a) => a.slug === params.slug);
 
   if (!article) {
