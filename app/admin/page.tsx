@@ -1,6 +1,6 @@
 'use client';
 
-import Image from "next/image"
+import Image from "next/image";
 import { useState } from 'react';
 import ArticleForm from '@/app/components/ArticleForm';
 import { UploadButton } from '@/lib/uploadthing';
@@ -37,7 +37,6 @@ export default function AdminPage() {
   // Active Admin Tab ('articles' | 'products')
   const [activeTab, setActiveTab] = useState<'articles' | 'products'>('articles');
 
-
   // Products State
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -52,9 +51,6 @@ export default function AdminPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [seedlingFile, setSeedlingFile] = useState<File | null>(null);
-  // const [matureFile, setMatureFile] = useState<File | null>(null);
-  // const [isUploading, setIsUploading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +63,6 @@ export default function AdminPage() {
     }
 
     if (password === expectedPassword) {
-      // In a real app, generate a token on the backend
       const key = expectedPassword;
       setAdminKey(key);
       setAuthenticated(true);
@@ -81,22 +76,31 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/articles');
       if (response.ok) {
-        setArticles(await response.json());
+        const data = await response.json();
+        // Ensure state is set only if the response is an Array
+        setArticles(Array.isArray(data) ? data : []);
+      } else {
+        setArticles([]);
       }
     } catch (error) {
       console.error('Error loading articles:', error);
+      setArticles([]);
     }
   };
-
 
   const loadProducts = async () => {
     try {
       const response = await fetch('/api/products');
       if (response.ok) {
-        setProducts(await response.json());
+        const data = await response.json();
+        // Ensure state is set only if the response is an Array
+        setProducts(Array.isArray(data) ? data : []);
+      } else {
+        setProducts([]);
       }
     } catch (error) {
       console.error('Error loading products:', error);
+      setProducts([]);
     }
   };
 
@@ -112,7 +116,7 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        setArticles(articles.filter((a) => a.id !== id));
+        setArticles((prev) => prev.filter((a) => a.id !== id));
         alert('Article deleted successfully');
       } else {
         alert('Failed to delete article');
@@ -122,35 +126,6 @@ export default function AdminPage() {
       alert('Error deleting article');
     }
   };
-
-  // Convert uploaded image files to base64 string for direct SQLite storage
-  // const uploadImageFile = async (file: File): Promise<string | null> => {
-  //   const formData = new FormData();
-  //   formData.append('file', file);
-  //   formData.append('folder', 'products');
-
-  //   try {
-  //     const res = await fetch('/api/upload', {
-  //       method: 'POST',
-  //       headers: {
-  //         authorization: `Bearer ${adminKey}`,
-  //       },
-  //       body: formData,
-  //     });
-
-  //     if (!res.ok) {
-  //       const errorData = await res.json();
-  //       alert(`Image upload failed: ${errorData.error || 'Server error'}`);
-  //       return null;
-  //     }
-
-  //     const data = await res.json();
-  //     return data.url; // e.g. "/uploads/products/172158...-file.jpg"
-  //   } catch (error) {
-  //     console.error('Error uploading image:', error);
-  //     return null;
-  //   }
-  // };
 
   // Product Form Handlers
   const handleProductSubmit = async (e: React.FormEvent) => {
@@ -194,7 +169,6 @@ export default function AdminPage() {
     }
   };
 
-
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setProductForm(product);
@@ -212,7 +186,7 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        setProducts(products.filter((p) => p.id !== id));
+        setProducts((prev) => prev.filter((p) => p.id !== id));
         alert('Product deleted successfully');
       } else {
         alert('Failed to delete product');
@@ -222,7 +196,6 @@ export default function AdminPage() {
       alert('Error deleting product');
     }
   };
-
 
   if (!authenticated) {
     return (
@@ -287,8 +260,8 @@ export default function AdminPage() {
               loadArticles();
             }}
             className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'articles'
-              ? 'border-green-600 text-green-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-green-600 text-green-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             Articles Management
@@ -299,8 +272,8 @@ export default function AdminPage() {
               loadProducts();
             }}
             className={`pb-4 px-4 font-semibold text-lg border-b-2 transition-colors ${activeTab === 'products'
-              ? 'border-green-600 text-green-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-green-600 text-green-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             Products / Ecommerce
@@ -334,7 +307,7 @@ export default function AdminPage() {
             <div className="md:col-span-2">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Articles List</h2>
               <div className="space-y-4">
-                {articles.length === 0 ? (
+                {(!Array.isArray(articles) || articles.length === 0) ? (
                   <p className="text-gray-500">No articles yet. Create one to get started!</p>
                 ) : (
                   articles.map((article) => (
@@ -424,12 +397,12 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Seedling Image URL (Primary)</label>
-                    <UploadButton
+                  <UploadButton
                     endpoint="imageUploader"
                     onClientUploadComplete={(res: { ufsUrl: string }[]) => {
                       if (res?.[0]) {
-                      setProductForm((prev) => ({ ...prev, image: res[0].ufsUrl }));
-                      alert('Seedling image uploaded successfully!');
+                        setProductForm((prev) => ({ ...prev, image: res[0].ufsUrl }));
+                        alert('Seedling image uploaded successfully!');
                       }
                     }}
                     onUploadError={(error: Error) => {
@@ -443,12 +416,12 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Grown Tree Image URL (Hover)</label>
-                    <UploadButton
+                  <UploadButton
                     endpoint="imageUploader"
                     onClientUploadComplete={(res: { ufsUrl: string }[]) => {
                       if (res?.[0]) {
-                      setProductForm((prev) => ({ ...prev, matureImage: res[0].ufsUrl }));
-                      alert('Mature tree image uploaded successfully!');
+                        setProductForm((prev) => ({ ...prev, matureImage: res[0].ufsUrl }));
+                        alert('Mature tree image uploaded successfully!');
                       }
                     }}
                     onUploadError={(error: Error) => {
@@ -506,7 +479,7 @@ export default function AdminPage() {
             <div className="md:col-span-2">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Catalog</h2>
               <div className="space-y-4">
-                {products.length === 0 ? (
+                {(!Array.isArray(products) || products.length === 0) ? (
                   <p className="text-gray-500">No products added yet.</p>
                 ) : (
                   products.map((product) => (
